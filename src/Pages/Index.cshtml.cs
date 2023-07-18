@@ -68,10 +68,12 @@ namespace TN_AI_NOTES_DEMO.Pages
         }
         private void UpdateForm(string systemPrompt, string result)
         {
-            Treatment = (Treatment != "") ? _AI.Query(systemPrompt + result + "\n\n" + Treatment).Result : "";
-            Progress = (Progress != "") ? _AI.Query(systemPrompt + result + "\n\n" + Progress).Result : "";
-            Goals = (Goals != "") ? _AI.Query(systemPrompt + result + "\n\n" + Goals).Result : "";
-            Notes = (Notes != "") ? _AI.Query(systemPrompt + result + "\n\n" + Notes).Result : "";
+            var promptContext = systemPrompt + result + "\n\n";
+
+            Treatment = (Treatment != "") ? _AI.Query(promptContext + Treatment).Result : "";
+            Progress = (Progress != "") ? _AI.Query(promptContext + Progress).Result : "";
+            Goals = (Goals != "") ? _AI.Query(promptContext + Goals).Result : "";
+            Notes = (Notes != "") ? _AI.Query(promptContext + Notes).Result : "";
 
             // For MVC save for the re-get
             TempData["Treatment"] = Treatment.Replace("\n", "");
