@@ -2,7 +2,7 @@
 using System.Text.Json;
 using TN_AI_NOTES_DEMO;
 
-namespace TN_AI_NOTES_DEMO2
+namespace TN_AI_NOTES_DEMO
 {
     internal class GPT : IArtificialIntelligence
     {

@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using TN_AI_NOTES_DEMO;
 
-namespace TN_AI_NOTES_DEMO2.Pages
+namespace TN_AI_NOTES_DEMO.Pages
 {
     public class IndexModel : PageModel
     {

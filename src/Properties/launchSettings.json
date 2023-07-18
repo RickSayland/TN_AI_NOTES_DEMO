@@ -8,7 +8,7 @@
     }
   },
   "profiles": {
-    "TN_AI_NOTES_DEMO2": {
+    "TN_AI_NOTES_DEMO": {
       "commandName": "Project",
       "dotnetRunMessages": true,
       "launchBrowser": true,
