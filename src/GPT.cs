@@ -1,9 +1,10 @@
 ﻿using System.Text;
 using System.Text.Json;
+using TN_AI_NOTES_DEMO;
 
 namespace TN_AI_NOTES_DEMO2
 {
-    internal class GPT
+    internal class GPT : IArtificialIntelligence
     {
         private static readonly Lazy<GPT> lazyInstance = new Lazy<GPT>(() => new GPT());
         private readonly HttpClient _httpClient;

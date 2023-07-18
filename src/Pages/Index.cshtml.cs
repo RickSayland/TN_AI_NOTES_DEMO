@@ -1,11 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using TN_AI_NOTES_DEMO;
 
 namespace TN_AI_NOTES_DEMO2.Pages
 {
     public class IndexModel : PageModel
     {
-        private readonly ILogger<IndexModel> _logger;
+        private readonly IArtificialIntelligence _AI;
 
         [BindProperty]
         public string Treatment { get; set; }
@@ -19,9 +20,14 @@ namespace TN_AI_NOTES_DEMO2.Pages
         [BindProperty]
         public string Notes { get; set; }
 
-        public IndexModel(ILogger<IndexModel> logger)
+        public IndexModel()
         {
-            _logger = logger;
+            _AI = GPT.Instance;
+
+            Treatment = "This patient needs help. They are annoying and keep telling me they see ghosts. They should take ibuprofen 200mg daily to fix this.";
+            Progress = "The patient is making terrible progress. They have a new best friend named Casper.";
+            Goals = "The patient should aim to see less ghosts.";
+            Notes = "Try not to frighten the pateint. Dont wear white lab coats.";
         }
 
         public void OnGet()
@@ -41,7 +47,7 @@ namespace TN_AI_NOTES_DEMO2.Pages
         {
             var systemPrompt = "You will respond to all prompts with an angrier version of the prompt text - except for this first prompt. Respond with OK if you understand.";
 
-            var result = GPT.Instance.Query(systemPrompt).Result;
+            var result = _AI.Query(systemPrompt).Result;
             if (result == "\n\nOK")
             {
                 UpdateForm(systemPrompt, result);
@@ -53,7 +59,7 @@ namespace TN_AI_NOTES_DEMO2.Pages
         {
             var systemPrompt = "You will respond to all prompts with a less angry version of the prompt text - except for this first prompt. Respond with OK if you understand.";
 
-            var result = GPT.Instance.Query(systemPrompt).Result;
+            var result = _AI.Query(systemPrompt).Result;
             if (result == "\n\nOK")
             {
                 UpdateForm(systemPrompt, result);
@@ -62,16 +68,16 @@ namespace TN_AI_NOTES_DEMO2.Pages
         }
         private void UpdateForm(string systemPrompt, string result)
         {
-            Treatment = (Treatment != "") ? GPT.Instance.Query(systemPrompt + result + "\n\n" + Treatment).Result : "";
-            Progress = (Progress != "") ? GPT.Instance.Query(systemPrompt + result + "\n\n" + Progress).Result : "";
-            Goals = (Goals != "") ? GPT.Instance.Query(systemPrompt + result + "\n\n" + Goals).Result : "";
-            Notes = (Notes != "") ? GPT.Instance.Query(systemPrompt + result + "\n\n" + Notes).Result : "";
+            Treatment = (Treatment != "") ? _AI.Query(systemPrompt + result + "\n\n" + Treatment).Result : "";
+            Progress = (Progress != "") ? _AI.Query(systemPrompt + result + "\n\n" + Progress).Result : "";
+            Goals = (Goals != "") ? _AI.Query(systemPrompt + result + "\n\n" + Goals).Result : "";
+            Notes = (Notes != "") ? _AI.Query(systemPrompt + result + "\n\n" + Notes).Result : "";
 
-            // For MCS save for the re-get
-            TempData["Treatment"] = Treatment;
-            TempData["Progress"] = Progress;
-            TempData["Goals"] = Goals;
-            TempData["Notes"] = Notes;
+            // For MVC save for the re-get
+            TempData["Treatment"] = Treatment.Replace("\n", "");
+            TempData["Progress"] = Progress.Replace("\n", "");
+            TempData["Goals"] = Goals.Replace("\n", "");
+            TempData["Notes"] = Notes.Replace("\n", "");
         }
     }
 }
