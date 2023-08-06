@@ -62,5 +62,23 @@ namespace TN_AI_NOTES_DEMO.Pages
 
             return RedirectToPage();
         }
+        //TO:DO - make this stable
+        private async Task<IActionResult> BatchUpdateForm(string systemPrompt)
+        {
+            _AI.SetSystemMessage(systemPrompt + "I will use semicolons as separators, use them in your response too please.");
+
+            var prompt = $"{Treatment};{Progress};{Goals};{Notes};";
+
+            var response = await _AI.Query(prompt);
+
+            var foo = response.Split(";");
+
+            TempData["Treatment"] = foo[0];
+            TempData["Progress"] = foo[1];
+            TempData["Goals"] = foo[2];
+            TempData["Notes"] = foo[3];
+
+            return RedirectToPage();
+        }
     }
 }
