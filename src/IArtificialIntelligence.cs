@@ -3,5 +3,6 @@
     public interface IArtificialIntelligence
     {
         public Task<string> Query(string prompt);
+        public void SetSystemMessage(string systemMessage);
     }
 }

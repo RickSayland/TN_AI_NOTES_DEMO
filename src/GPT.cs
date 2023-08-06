@@ -8,17 +8,23 @@ namespace TN_AI_NOTES_DEMO
     {
         private static readonly Lazy<GPT> lazyInstance = new Lazy<GPT>(() => new GPT());
         private readonly HttpClient _httpClient;
-        private readonly string _engine;
+        private Message _systemMessage = new Message("system", "you are an AI assistant");
+        private List<Message> _conversation = new List<Message>();
 
         record CompletionResponse(Choice[] choices);
-        record Choice(string text);
+        record Choice(Message message);
+
+        record Message(string role, string content);
+
+
+
 
         private GPT()
         {
             _httpClient = new HttpClient();
             var apikey = Environment.GetEnvironmentVariable("OPENAI_API_KEY");
             _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {apikey}");
-            _engine = "text-davinci-003";
+            _conversation.Add(_systemMessage);
         }
 
         public static GPT Instance
@@ -28,14 +34,25 @@ namespace TN_AI_NOTES_DEMO
                 return lazyInstance.Value;
             }
         }
-
+        public void SetSystemMessage(string systemMessage)
+        {
+            _systemMessage = new Message("system", systemMessage);
+            _conversation = new List<Message>();
+            _conversation.Add(_systemMessage);
+        }
         public async Task<string> Query(string prompt = "Once upon a time")
         {
+            _conversation.Add(new Message("user", prompt));
+
             var request = new
             {
-                prompt = prompt,
-                temperature = 0.5,
-                max_tokens = 500
+                model = "gpt-3.5-turbo",
+                messages = _conversation,
+                temperature = 1,
+                max_tokens = 256,
+                top_p = 1,
+                frequency_penalty = 0,
+                presence_penalty = 0
             };
 
             var jsonOptions = new JsonSerializerOptions
@@ -46,10 +63,13 @@ namespace TN_AI_NOTES_DEMO
 
             var content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
 
-            var response = await _httpClient.PostAsync($"https://api.openai.com/v1/engines/{_engine}/completions", content);
+            var response = await _httpClient.PostAsync($"https://api.openai.com/v1/chat/completions", content);
             var jsonResponse = await response.Content.ReadAsStringAsync();
             var responseData = JsonSerializer.Deserialize<CompletionResponse>(jsonResponse);
-            var generatedText = responseData?.choices?[0]?.text ?? string.Empty;
+            var generatedText = responseData?.choices?[0]?.message?.content ?? string.Empty;
+
+            // add it to conversation context!
+            _conversation.Add(new Message("assistant",generatedText));
 
             return generatedText;
         }

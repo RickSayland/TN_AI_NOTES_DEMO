@@ -45,41 +45,33 @@ namespace TN_AI_NOTES_DEMO.Pages
 
         public IActionResult OnPostMoreAngry()
         {
-            var systemPrompt = "You will respond to all prompts with an angrier version of the prompt text - except for this first prompt. Respond with OK if you understand.";
+            _AI.SetSystemMessage("You will respond to all prompts with an angrier version of the prompt text");
 
-            var result = _AI.Query(systemPrompt).Result;
-            if (result == "\n\nOK")
-            {
-                UpdateForm(systemPrompt, result);
-            }
+            UpdateForm();
+
             return RedirectToPage();
 
         }
         public IActionResult OnPostLessAngry()
         {
-            var systemPrompt = "You will respond to all prompts with a less angry version of the prompt text - except for this first prompt. Respond with OK if you understand.";
+            _AI.SetSystemMessage("You will respond to all prompts with a less angry version of the prompt text");
 
-            var result = _AI.Query(systemPrompt).Result;
-            if (result == "\n\nOK")
-            {
-                UpdateForm(systemPrompt, result);
-            }
+            UpdateForm();
+
             return RedirectToPage();
         }
-        private void UpdateForm(string systemPrompt, string result)
+        private void UpdateForm()
         {
-            var promptContext = systemPrompt + result + "\n\n";
-
-            Treatment = (Treatment != "") ? _AI.Query(promptContext + Treatment).Result : "";
-            Progress = (Progress != "") ? _AI.Query(promptContext + Progress).Result : "";
-            Goals = (Goals != "") ? _AI.Query(promptContext + Goals).Result : "";
-            Notes = (Notes != "") ? _AI.Query(promptContext + Notes).Result : "";
+            Treatment = (Treatment != "") ? _AI.Query(Treatment).Result : "";
+            Progress = (Progress != "") ? _AI.Query(Progress).Result : "";
+            Goals = (Goals != "") ? _AI.Query(Goals).Result : "";
+            Notes = (Notes != "") ? _AI.Query(Notes).Result : "";
 
             // For MVC save for the re-get
-            TempData["Treatment"] = Treatment.Replace("\n", "");
-            TempData["Progress"] = Progress.Replace("\n", "");
-            TempData["Goals"] = Goals.Replace("\n", "");
-            TempData["Notes"] = Notes.Replace("\n", "");
+            TempData["Treatment"] = Treatment;
+            TempData["Progress"] = Progress;
+            TempData["Goals"] = Goals;
+            TempData["Notes"] = Notes;
         }
     }
 }
