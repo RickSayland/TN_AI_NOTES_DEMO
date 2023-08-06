@@ -45,29 +45,20 @@ namespace TN_AI_NOTES_DEMO.Pages
 
         public async Task<IActionResult> OnPostMoreAngryAsync()
         {
-            _AI.SetSystemMessage("You will respond to all prompts with an angrier version of the prompt text. Try to keep the text as close to the original as possible.");
-
-            return await UpdateForm();
-
+            return await UpdateForm("You will respond to all prompts with an angrier version of the prompt text. Try to keep the text as close to the original as possible.");
         }
         public async Task<IActionResult> OnPostLessAngryAsync()
         {
-            _AI.SetSystemMessage("You will respond to all prompts with a less angry version of the prompt text. Try to keep the text as close to the original as possible.");
-
-            return await UpdateForm();
+            return await UpdateForm("You will respond to all prompts with a less angry version of the prompt text. Try to keep the text as close to the original as possible.");
         }
-        private async Task<IActionResult> UpdateForm()
+        private async Task<IActionResult> UpdateForm(string systemPrompt)
         {
-            Treatment = (Treatment != "") ? await _AI.Query(Treatment) : "";
-            Progress = (Progress != "") ? await _AI.Query(Progress) : "";
-            Goals = (Goals != "") ? await _AI.Query(Goals) : "";
-            Notes = (Notes != "") ? await _AI.Query(Notes) : "";
+            _AI.SetSystemMessage(systemPrompt);
 
-            // For MVC save for the re-get
-            TempData["Treatment"] = Treatment;
-            TempData["Progress"] = Progress;
-            TempData["Goals"] = Goals;
-            TempData["Notes"] = Notes;
+            TempData["Treatment"] = (Treatment != "") ? await _AI.Query(Treatment) : "";
+            TempData["Progress"] = (Progress != "") ? await _AI.Query(Progress) : "";
+            TempData["Goals"] = (Goals != "") ? await _AI.Query(Goals) : "";
+            TempData["Notes"] = (Notes != "") ? await _AI.Query(Notes) : "";
 
             return RedirectToPage();
         }
