@@ -43,35 +43,33 @@ namespace TN_AI_NOTES_DEMO.Pages
 
         }
 
-        public IActionResult OnPostMoreAngry()
+        public async Task<IActionResult> OnPostMoreAngryAsync()
         {
             _AI.SetSystemMessage("You will respond to all prompts with an angrier version of the prompt text. Try to keep the text as close to the original as possible.");
 
-            UpdateForm();
-
-            return RedirectToPage();
+            return await UpdateForm();
 
         }
-        public IActionResult OnPostLessAngry()
+        public async Task<IActionResult> OnPostLessAngryAsync()
         {
             _AI.SetSystemMessage("You will respond to all prompts with a less angry version of the prompt text. Try to keep the text as close to the original as possible.");
 
-            UpdateForm();
-
-            return RedirectToPage();
+            return await UpdateForm();
         }
-        private void UpdateForm()
+        private async Task<IActionResult> UpdateForm()
         {
-            Treatment = (Treatment != "") ? _AI.Query(Treatment).Result : "";
-            Progress = (Progress != "") ? _AI.Query(Progress).Result : "";
-            Goals = (Goals != "") ? _AI.Query(Goals).Result : "";
-            Notes = (Notes != "") ? _AI.Query(Notes).Result : "";
+            Treatment = (Treatment != "") ? await _AI.Query(Treatment) : "";
+            Progress = (Progress != "") ? await _AI.Query(Progress) : "";
+            Goals = (Goals != "") ? await _AI.Query(Goals) : "";
+            Notes = (Notes != "") ? await _AI.Query(Notes) : "";
 
             // For MVC save for the re-get
             TempData["Treatment"] = Treatment;
             TempData["Progress"] = Progress;
             TempData["Goals"] = Goals;
             TempData["Notes"] = Notes;
+
+            return RedirectToPage();
         }
     }
 }
