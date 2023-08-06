@@ -45,7 +45,7 @@ namespace TN_AI_NOTES_DEMO.Pages
 
         public IActionResult OnPostMoreAngry()
         {
-            _AI.SetSystemMessage("You will respond to all prompts with an angrier version of the prompt text");
+            _AI.SetSystemMessage("You will respond to all prompts with an angrier version of the prompt text. Try to keep the text as close to the original as possible.");
 
             UpdateForm();
 
@@ -54,7 +54,7 @@ namespace TN_AI_NOTES_DEMO.Pages
         }
         public IActionResult OnPostLessAngry()
         {
-            _AI.SetSystemMessage("You will respond to all prompts with a less angry version of the prompt text");
+            _AI.SetSystemMessage("You will respond to all prompts with a less angry version of the prompt text. Try to keep the text as close to the original as possible.");
 
             UpdateForm();
 

@@ -6,24 +6,15 @@ namespace TN_AI_NOTES_DEMO
 {
     internal class GPT : IArtificialIntelligence
     {
-        private static readonly Lazy<GPT> lazyInstance = new Lazy<GPT>(() => new GPT());
+        private static readonly Lazy<GPT> lazyInstance = new(() => new GPT());
         private readonly HttpClient _httpClient;
-        private Message _systemMessage = new Message("system", "you are an AI assistant");
-        private List<Message> _conversation = new List<Message>();
-
-        record CompletionResponse(Choice[] choices);
-        record Choice(Message message);
-
-        record Message(string role, string content);
-
-
-
+        private Message _systemMessage = new("system", "You are an AI assistant.");
+        private List<Message> _conversation = new();
 
         private GPT()
         {
             _httpClient = new HttpClient();
-            var apikey = Environment.GetEnvironmentVariable("OPENAI_API_KEY");
-            _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {apikey}");
+            _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {Environment.GetEnvironmentVariable("OPENAI_API_KEY")}");
             _conversation.Add(_systemMessage);
         }
 
@@ -37,8 +28,10 @@ namespace TN_AI_NOTES_DEMO
         public void SetSystemMessage(string systemMessage)
         {
             _systemMessage = new Message("system", systemMessage);
-            _conversation = new List<Message>();
-            _conversation.Add(_systemMessage);
+            _conversation = new List<Message>
+            {
+                _systemMessage
+            };
         }
         public async Task<string> Query(string prompt = "Once upon a time")
         {
@@ -73,6 +66,12 @@ namespace TN_AI_NOTES_DEMO
 
             return generatedText;
         }
-
     }
+
+    // Types for serialization
+    #pragma warning disable IDE1006 // Naming Styles
+    record Message(string role, string content);
+    record Choice(Message message);
+    record CompletionResponse(Choice[] choices);
+    #pragma warning restore IDE1006 // Naming Styles
 }
